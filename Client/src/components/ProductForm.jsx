@@ -1,25 +1,34 @@
 import { useState } from "react";
 import ImageUpload from "./ImageUpload";
 
-const emptyForm = { name: "", price: "", description: "", image: "" };
+const emptyForm = {
+  name: "",
+  price: "",
+  description: "",
+  image: "",
+  category: "Others",
+};
 
 const inputClass =
   "w-full rounded-xl border border-slate-300 px-4 py-3 outline-none " +
   "transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100";
 
 function ProductForm({ editingProduct, onSubmit, onCancel }) {
-  const [form, setForm] = useState(editingProduct || emptyForm);
+  const [form, setForm] = useState({
+    ...emptyForm,
+    ...editingProduct,
+    category: editingProduct?.category || "Others",
+  });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formElement = e.target;
-    const { name, price, description, image } = form;
+    const { name, price, description, image, category } = form;
 
     if (!name.trim() || price === "" || !image) {
       return setError("Name, price, and image are required.");
@@ -32,10 +41,10 @@ function ProductForm({ editingProduct, onSubmit, onCancel }) {
         price: Number(price),
         description,
         image,
+        category,
       });
-      setForm(emptyForm);
+      setForm({ ...emptyForm });
       setError("");
-      formElement.reset();
     } catch {
       setError("Could not save the product. Please try again.");
     } finally {
@@ -74,6 +83,18 @@ function ProductForm({ editingProduct, onSubmit, onCancel }) {
         value={form.price}
         onChange={handleChange}
       />
+      <select
+        name="category"
+        aria-label="Product category"
+        className={inputClass}
+        value={form.category}
+        onChange={handleChange}
+      >
+        <option value="Electronics">Electronics</option>
+        <option value="Accessories">Accessories</option>
+        <option value="Toys & Collectibles">Toys & Collectibles</option>
+        <option value="Others">Others</option>
+      </select>
       <textarea
         name="description"
         rows="3"

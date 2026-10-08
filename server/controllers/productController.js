@@ -22,8 +22,16 @@ export const getProduct = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { name, price, description, image } = req.body;
-    const product = await Product.create({ name, price, description, image });
+    const { name, price, description, image, category } = req.body;
+
+    const product = await Product.create({
+      name,
+      price,
+      description,
+      image,
+      category,
+    });
+
     res.status(201).json(product);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -32,14 +40,17 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
-    const { name, price, description, image } = req.body;
+    const { name, price, description, image, category } = req.body;
+
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      { name, price, description, image },
+      { name, price, description, image, category },
       { new: true, runValidators: true }
     );
+
     if (!product)
       return res.status(404).json({ message: "Product not found" });
+
     res.json(product);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -49,8 +60,10 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
+
     if (!product)
       return res.status(404).json({ message: "Product not found" });
+
     res.json({ message: "Product deleted" });
   } catch (error) {
     res.status(400).json({ message: error.message });

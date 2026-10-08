@@ -21,6 +21,11 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: [true, "Image is required"],
     },
+    category: {
+      type: String,
+      enum: ["Electronics", "Accessories", "Toys & Collectibles", "Others"],
+      default: "Others",
+    },
   },
   { timestamps: true }
 );
